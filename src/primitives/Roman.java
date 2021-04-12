@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Roman implements Operand{
-    private final HashMap<Character, Integer> roman;
-    {
+    private static final HashMap<Character, Integer> roman;
+    static {
         roman = new HashMap<>();
 
         roman.put('I', 1);
@@ -19,10 +19,16 @@ public class Roman implements Operand{
 
     private String left = "";
 
-    private void checkRomanLine (String romanLine) throws Exception{
-        //todo
+    private String multiplyStr(String str, int mult){
+        StringBuilder res = new StringBuilder();
+        for (int i = 0; i < mult; i++)
+            res.append(str);
+        return res.toString();
+    }
 
-        // проверка входжения иных символов
+    private void checkRomanLine (String romanLine) throws Exception{
+
+        // проверка вхождения иных символов
         for (int i = 0; i < romanLine.length(); i++){
             if (!roman.containsKey(romanLine.charAt(i)))
                 throw new Exception("No Roman num.");
@@ -146,10 +152,63 @@ public class Roman implements Operand{
         return new Arabic(Integer.toString(res));
     }
 
-    public Roman arabicToRoman (Arabic arabic){
-        //todo
+    public Roman arabicToRoman (Arabic arabic) throws Exception {
+        if(Integer.parseInt(arabic.toString()) > 3999)
+            throw new Exception("\tIt is impossible to write the number in roman numerals\n"+"\tArabic number: "+arabic.toString());
+        int ar = Integer.parseInt(arabic.toString());
+        StringBuilder res = new StringBuilder();
 
-        return new Roman();
+        // обрабатываем тысячи
+        if (ar / 1000 > 0){
+            res.append(multiplyStr("M", ar / 1000));
+            ar %= 1000;
+        }
+
+        // обрабатываем сотни
+        if (ar / 100 == 9)
+            res.append("CM");
+        else {
+            if (ar / 500 == 1) {
+                res.append("D");
+                ar %= 500;
+            }
+            if (ar / 100 == 4)
+                res.append("CD");
+            else
+                res.append(multiplyStr("C", ar / 100));
+        }
+        ar %= 100;
+
+        // обрабатываем десятки
+        if (ar / 10 == 9)
+            res.append("XC");
+        else {
+            if (ar / 50 == 1){
+                res.append("L");
+                ar %= 50;
+            }
+            if (ar / 10 == 4)
+                res.append("XL");
+            else
+                res.append(multiplyStr("X", ar / 10));
+        }
+        ar %= 10;
+
+        // обрабатываем единицы
+        if (ar == 9)
+            res.append("IX");
+        else {
+            if (ar / 5 == 1) {
+                res.append("V");
+                ar %= 5;
+            }
+            if (ar == 4)
+                res.append("IV");
+            else
+                res.append(multiplyStr("I", ar));
+        }
+
+        return new Roman(res.toString());
     }
 
     @Override

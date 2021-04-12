@@ -1,23 +1,34 @@
 package primitives;
 
 public class Arabic implements Operand {
-    private String left = "";
-
-    Arabic(){}
-
-    public Arabic(String op){
-        left = new String(op);
-    }
-
-    public Arabic(Arabic op){
-        this.left = new String(op.left);
-    }
+    private String left;
 
     private String multiplyStr(String str, int mult){
+
         StringBuilder res = new StringBuilder();
         for (int i = 0; i < mult; i++)
             res.append(str);
         return res.toString();
+    }
+
+    Arabic() throws Exception {
+
+        this("");
+    }
+
+    public Arabic(String op) throws Exception{
+
+        for(int i = 0; i < op.length(); i++){
+            if(i == 0 && op.charAt(0) == '-' && op.length() > 1) continue;
+            if (!AllowedCharacters.isArabic(op.charAt(i)))
+                throw new Exception("No Arabic num.");
+        }
+        this.left = op;
+    }
+
+    public Arabic(Arabic op){
+
+        this.left = op.left;
     }
 
     @Override
@@ -26,8 +37,8 @@ public class Arabic implements Operand {
         if (!(right instanceof Arabic))
             throw new Exception("Invalid arg.");
 
-        Integer res = Integer.parseInt(this.left) + Integer.parseInt(((Arabic)right).left);
-        return new Arabic(res.toString());
+        int res = Integer.parseInt(this.left) + Integer.parseInt(((Arabic)right).left);
+        return new Arabic(Integer.toString(res));
     }
 
     @Override
@@ -36,8 +47,8 @@ public class Arabic implements Operand {
         if (!(right instanceof Arabic))
             throw new Exception("Invalid arg.");
 
-        Integer res = Integer.parseInt(this.left) - Integer.parseInt(((Arabic)right).left);
-        return new Arabic(res.toString());
+        int res = Integer.parseInt(this.left) - Integer.parseInt(((Arabic)right).left);
+        return new Arabic(Integer.toString(res));
     }
 
     @Override
@@ -46,8 +57,8 @@ public class Arabic implements Operand {
         if (!(right instanceof Arabic))
             throw new Exception("Invalid arg.");
 
-        Integer res = Integer.parseInt(this.left) * Integer.parseInt(((Arabic)right).left);
-        return new Arabic(res.toString());
+        int res = Integer.parseInt(this.left) * Integer.parseInt(((Arabic)right).left);
+        return new Arabic(Integer.toString(res));
     }
 
     @Override
@@ -60,16 +71,16 @@ public class Arabic implements Operand {
             throw new Exception("Divide by zero.");
         }
 
-        Integer res = Integer.parseInt(this.left) / Integer.parseInt(((Arabic)right).left);
-        return new Arabic(res.toString());
+        int res = Integer.parseInt(this.left) / Integer.parseInt(((Arabic)right).left);
+        return new Arabic(Integer.toString(res));
     }
 
-    public Roman arabicToRoman () throws Exception {
+    public Roman toRoman () throws Exception {
 
-        if(Integer.parseInt(left) > 3999)
+        if(Integer.parseInt(this.left) > 3999)
             throw new Exception("\tIt is impossible to write the number in roman numerals\n"+"\tArabic number: "+left);
 
-        int ar = Integer.parseInt(left);
+        int ar = Integer.parseInt(this.left);
         StringBuilder res = new StringBuilder();
 
         // обрабатываем тысячи
@@ -127,6 +138,8 @@ public class Arabic implements Operand {
 
     @Override
     public String toString (){
-        return new String(this.left);
+
+        return this.left;
     }
+
 }

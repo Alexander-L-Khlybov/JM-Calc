@@ -17,9 +17,7 @@ public class Roman implements Operand{
         roman.put('M', 1000);
     }
 
-    private String left = "";
-
-
+    private String left;
 
     private void checkRomanLine (String romanLine) throws Exception{
 
@@ -43,16 +41,20 @@ public class Roman implements Operand{
 
         // проверка правила вычитания
         for (int i = 1; i < romanLine.length(); i++){
+
             // вычитается меньшее, стоящее слева от большего
             if (roman.get(romanLine.charAt(i - 1)) < roman.get(romanLine.charAt(i))){
+
                 // вычитаемое должно быть степенью 10
                 if (roman.get(romanLine.charAt(i - 1)) != 1 &&
                     roman.get(romanLine.charAt(i - 1)) != 10 &&
                     roman.get(romanLine.charAt(i - 1)) != 100)
                     throw new Exception("Violation of the rule of subtraction 1");
+
                 // число слева от вычитаемого должно быть больше вычитаемого
                 if (i > 1 && roman.get(romanLine.charAt(i - 2)) <= roman.get(romanLine.charAt(i - 1)))
                     throw new Exception("Violation of the rule of subtraction 2");
+
                 // уменьшаемое не может быть старше вычитаемого больше чем на две позиции
                 if (roman.get(romanLine.charAt(i)) / roman.get(romanLine.charAt(i - 1)) > 10)
                     throw new Exception("Violation of the rule of subtraction 3");
@@ -61,70 +63,83 @@ public class Roman implements Operand{
 
     }
 
+    Roman() throws Exception{
 
-    Roman(){}
+        this("");
+    }
+
     public Roman(String op) throws Exception {
+
         checkRomanLine(op);
-        left = new String(op);
+        left = op;
     }
 
     public Roman(Roman op){
-        this.left = new String(op.left);
+
+        this.left = op.left;
     }
 
     @Override
     public Operand plus(Operand right) throws Exception{
+
         if (!(right instanceof Roman))
             throw new Exception("Invalid arg.");
 
-        Arabic lf = new Arabic(this.romanToArabic());
-        Arabic rg = new Arabic(((Roman)right).romanToArabic());
+        Arabic lf = new Arabic(this.toArabic());
+        Arabic rg = new Arabic(((Roman)right).toArabic());
 
         Arabic res = (Arabic) lf.plus(rg);
 
-        return res.arabicToRoman();
+        return res.toRoman();
     }
 
     @Override
     public Operand subtract(Operand right) throws Exception{
+
         if (!(right instanceof Roman))
             throw new Exception("Invalid arg.");
 
-        Arabic lf = new Arabic(this.romanToArabic());
-        Arabic rg = new Arabic(((Roman)right).romanToArabic());
+        Arabic lf = new Arabic(this.toArabic());
+        Arabic rg = new Arabic(((Roman)right).toArabic());
 
         Arabic res = (Arabic) lf.subtract(rg);
 
-        return res.arabicToRoman();
+        if (Integer.parseInt(res.toString()) <= 0){
+            throw new Exception("Roman number can only be natural.");
+        }
+
+        return res.toRoman();
     }
 
     @Override
     public Operand multiply(Operand right) throws Exception{
+
         if (!(right instanceof Roman))
             throw new Exception("Invalid arg.");
 
-        Arabic lf = new Arabic(this.romanToArabic());
-        Arabic rg = new Arabic(((Roman)right).romanToArabic());
+        Arabic lf = new Arabic(this.toArabic());
+        Arabic rg = new Arabic(((Roman)right).toArabic());
 
         Arabic res = (Arabic) lf.multiply(rg);
 
-        return res.arabicToRoman();
+        return res.toRoman();
     }
 
     @Override
     public Operand divide(Operand right) throws Exception{
+
         if (!(right instanceof Roman))
             throw new Exception("Invalid arg.");
 
-        Arabic lf = new Arabic(this.romanToArabic());
-        Arabic rg = new Arabic(((Roman)right).romanToArabic());
+        Arabic lf = new Arabic(this.toArabic());
+        Arabic rg = new Arabic(((Roman)right).toArabic());
 
         Arabic res = (Arabic) lf.divide(rg);
 
-        return res.arabicToRoman();
+        return res.toRoman();
     }
 
-    public Arabic romanToArabic(){
+    public Arabic toArabic() throws Exception {
 
         char[] tmp = left.toCharArray();
 
@@ -137,15 +152,19 @@ public class Roman implements Operand{
                 sub.add(i - 1);
             }
         }
+
         for (int i = 0; i < tmp.length; i++){
             if(sub.contains(i)) continue;
             res += roman.get(tmp[i]);
         }
+
         return new Arabic(Integer.toString(res));
     }
 
     @Override
     public String toString (){
-        return new String(this.left);
+
+        return this.left;
     }
+
 }

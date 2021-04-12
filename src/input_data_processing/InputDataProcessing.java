@@ -21,7 +21,7 @@ public class InputDataProcessing {
                 if (tmp.charAt(i) == ' ')
                     tmp.delete(i, i + 1);
             }
-        } while (!spc);
+        } while (spc);
 
         return tmp.toString();
     }

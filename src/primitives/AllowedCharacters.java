@@ -6,6 +6,7 @@ public class AllowedCharacters {
     private static final HashSet<Character> OPERATION;
     static{
         OPERATION = new HashSet<>();
+
         OPERATION.add('+');
         OPERATION.add('-');
         OPERATION.add('*');
@@ -42,18 +43,22 @@ public class AllowedCharacters {
     }
 
     public static boolean isOperation (Character op){
+
         return OPERATION.contains(op);
     }
 
     public static boolean isArabic (Character ar){
+
         return ARABIC_OPERANDS.contains(ar);
     }
 
     public static boolean isRoman (Character ro){
+
         return ROMAN_OPERANDS.contains(ro);
     }
 
     public static boolean isAllowedCharacter (Character ac){
+
         return isOperation(ac) || isArabic(ac) || isRoman(ac);
     }
 
